@@ -86,7 +86,6 @@ int main(int ac,  char **av)
         usleep(16000); // Wait for 16ms (~60fps)
     }
     
-    // Don't forget to delete the game instance when you're done
     delete graphical;
     delete game;
     loader.closeLibrary(graphicalLib);

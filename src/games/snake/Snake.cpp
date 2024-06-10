@@ -129,8 +129,8 @@ unsigned int SnakeGame::score() const {
 void SnakeGame::spawnFood() {
     int x, y;
     do {
-        x = rand() % 20;
-        y = rand() % 20;
+        x = rand() % 18 + 1;
+        y = rand() % 18 + 1;
     } while (!isCellFree(x, y));
     _food = {x, y};
 }
