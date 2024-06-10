@@ -140,15 +140,30 @@ void SnakeGame::draw(arc::IScreen& screen) {
     drawBorders(screen);
     drawScore(screen, _score);
 
-    for (const auto& segment : _snake) {
-        arc::IScreen::Tile tile;
-        tile.textCharacters = {'0', ' '};
-        screen.setTile(segment.second, segment.first, tile);
+    if (_gameOver) {
+        auto size = screen.getSize();
+        std::string gameOverStr = "Perdu";
+        int startX = (size.first - gameOverStr.size()) / 2;
+        int startY = size.second / 2;
+
+        for (size_t i = 0; i < gameOverStr.size(); ++i) {
+            arc::IScreen::Tile tile;
+            tile.textCharacters = {gameOverStr[i], ' '};
+            screen.setTile(startX + i, startY, tile);
+        }
+    } else {
+        for (const auto& segment : _snake) {
+            arc::IScreen::Tile tile;
+            tile.textCharacters = {'0', ' '};
+            screen.setTile(segment.second, segment.first, tile);
+        }
+
+        arc::IScreen::Tile foodTile;
+        foodTile.textCharacters = {'X', ' '};
+        screen.setTile(_food.second, _food.first, foodTile);
     }
 
-    arc::IScreen::Tile foodTile;
-    foodTile.textCharacters = {'X', ' '};
-    screen.setTile(_food.second, _food.first, foodTile);
+    
 }
 
 unsigned int SnakeGame::score() const {
