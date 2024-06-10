@@ -32,18 +32,10 @@ void arc::SnakeGame::reset() {
 void arc::SnakeGame::moveSnake() {
     auto head = _snake.front();
     switch (_direction) {
-        case UP:
-            head.first--;
-            break;
-        case DOWN:
-            head.first++;
-            break;
-        case LEFT:
-            head.second--;
-            break;
-        case RIGHT:
-            head.second++;
-            break;
+        case UP: head.first--; break;
+        case DOWN: head.first++; break;
+        case LEFT: head.second--; break;
+        case RIGHT: head.second++; break;
     }
 
     // Check for collision with edges
@@ -77,12 +69,30 @@ void arc::SnakeGame::update(float elapsed, const std::list<arc::Event>& events) 
 
     for (const auto& event : events) {
         switch (event) {
-            case arc::Event::EventUp: if (_direction != DOWN) _direction = UP; break;
-            case arc::Event::EventDown: if (_direction != UP) _direction = DOWN; break;
-            case arc::Event::EventLeft: if (_direction != RIGHT) _direction = LEFT; break;
-            case arc::Event::EventRight: if (_direction != LEFT) _direction = RIGHT; break;
-            case arc::Event::EventRestart: reset(); break;
-            case arc::Event::EventExit: _gameOver = true; break;
+            case arc::Event::EventLeft:
+                // Turn left (counter-clockwise)
+                switch (_direction) {
+                    case UP: _direction = LEFT; break;
+                    case DOWN: _direction = RIGHT; break;
+                    case LEFT: _direction = DOWN; break;
+                    case RIGHT: _direction = UP; break;
+                }
+                break;
+            case arc::Event::EventRight:
+                // Turn right (clockwise)
+                switch (_direction) {
+                    case UP: _direction = RIGHT; break;
+                    case DOWN: _direction = LEFT; break;
+                    case LEFT: _direction = UP; break;
+                    case RIGHT: _direction = DOWN; break;
+                }
+                break;
+            case arc::Event::EventRestart:
+                reset();
+                break;
+            case arc::Event::EventExit:
+                _gameOver = true;
+                break;
             default: break;
         }
     }

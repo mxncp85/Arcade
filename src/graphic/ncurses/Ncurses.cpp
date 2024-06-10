@@ -6,6 +6,8 @@
 */
 
 #include <ncurses.h>
+#include <iostream>
+#include <list>
 #include "../../../common/IGraphical.hpp"
 
 namespace arc
@@ -16,8 +18,10 @@ namespace arc
         Ncurses() {
             initscr();
             noecho();
+            cbreak();
             keypad(stdscr, TRUE);
-            raw();
+            curs_set(0);  // Hide cursor
+            nodelay(stdscr, TRUE); // Make getch() non-blocking
         }
 
         ~Ncurses() {
