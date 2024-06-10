@@ -29,12 +29,16 @@ namespace arc {
             void reset();
             void moveSnake();
             void checkCollision();
+            void spawnFood();
+            bool isCellFree(int x, int y) const;
 
             unsigned int _score;
             Direction _direction;
             std::deque<std::pair<int, int>> _snake;
             std::pair<int, int> _food;
             bool _gameOver;
+            float _speed;
+            float _elapsedTimeSinceLastMove;
     };
 }
 
