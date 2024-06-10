@@ -102,6 +102,24 @@ void SnakeGame::update(float elapsed, const std::list<arc::Event>& events) {
     }
 }
 
+void drawBorders(arc::IScreen& screen) {
+    auto size = screen.getSize();
+    arc::IScreen::Tile borderTile;
+    borderTile.textCharacters = {'/', ' '};
+
+    // Draw top and bottom borders
+    for (int x = 0; x < size.first; x++) {
+        screen.setTile(x, 0, borderTile);
+        screen.setTile(x, size.second - 1, borderTile);
+    }
+
+    // Draw left and right borders
+    for (int y = 0; y < size.second; y++) {
+        screen.setTile(0, y, borderTile);
+        screen.setTile(size.first - 1, y, borderTile);
+    }
+}
+
 void SnakeGame::draw(arc::IScreen& screen) {
     for (unsigned int y = 0; y < 20; ++y) {
         for (unsigned int x = 0; x < 20; ++x) {
@@ -110,6 +128,7 @@ void SnakeGame::draw(arc::IScreen& screen) {
             screen.setTile(x, y, emptyTile);
         }
     }
+    drawBorders(screen);
 
     for (const auto& segment : _snake) {
         arc::IScreen::Tile tile;
