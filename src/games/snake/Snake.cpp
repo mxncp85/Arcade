@@ -10,14 +10,16 @@
 #include <ctime>
 #include <algorithm>
 
-arc::SnakeGame::SnakeGame() : _score(0), _direction(RIGHT), _gameOver(false), _speed(0.1f), _elapsedTimeSinceLastMove(0) {
+namespace arc {
+
+SnakeGame::SnakeGame() : _score(0), _direction(RIGHT), _gameOver(false), _speed(1.3f), _elapsedTimeSinceLastMove(0) {
     srand(time(NULL));
     reset();
 }
 
-arc::SnakeGame::~SnakeGame() {}
+SnakeGame::~SnakeGame() {}
 
-void arc::SnakeGame::reset() {
+void SnakeGame::reset() {
     _score = 0;
     _direction = RIGHT;
     _snake.clear();
@@ -29,7 +31,7 @@ void arc::SnakeGame::reset() {
     spawnFood();
 }
 
-void arc::SnakeGame::moveSnake() {
+void SnakeGame::moveSnake() {
     auto head = _snake.front();
     switch (_direction) {
         case UP: head.first--; break;
@@ -38,7 +40,6 @@ void arc::SnakeGame::moveSnake() {
         case RIGHT: head.second++; break;
     }
 
-    // Check for collision with edges
     if (head.first < 0 || head.first >= 20 || head.second < 0 || head.second >= 20) {
         _gameOver = true;
         return;
@@ -54,15 +55,14 @@ void arc::SnakeGame::moveSnake() {
     checkCollision();
 }
 
-void arc::SnakeGame::checkCollision() {
+void SnakeGame::checkCollision() {
     auto head = _snake.front();
-    // Check for collision with body
     if (std::find(_snake.begin() + 1, _snake.end(), head) != _snake.end()) {
         _gameOver = true;
     }
 }
 
-void arc::SnakeGame::update(float elapsed, const std::list<arc::Event>& events) {
+void SnakeGame::update(float elapsed, const std::list<arc::Event>& events) {
     if (_gameOver) {
         return;
     }
@@ -70,7 +70,6 @@ void arc::SnakeGame::update(float elapsed, const std::list<arc::Event>& events) 
     for (const auto& event : events) {
         switch (event) {
             case arc::Event::EventLeft:
-                // Turn left (counter-clockwise)
                 switch (_direction) {
                     case UP: _direction = LEFT; break;
                     case DOWN: _direction = RIGHT; break;
@@ -79,7 +78,6 @@ void arc::SnakeGame::update(float elapsed, const std::list<arc::Event>& events) 
                 }
                 break;
             case arc::Event::EventRight:
-                // Turn right (clockwise)
                 switch (_direction) {
                     case UP: _direction = RIGHT; break;
                     case DOWN: _direction = LEFT; break;
@@ -104,30 +102,31 @@ void arc::SnakeGame::update(float elapsed, const std::list<arc::Event>& events) 
     }
 }
 
-void arc::SnakeGame::draw(arc::IScreen& screen) {
+void SnakeGame::draw(arc::IScreen& screen) {
+    for (unsigned int y = 0; y < 20; ++y) {
+        for (unsigned int x = 0; x < 20; ++x) {
+            arc::IScreen::Tile emptyTile;
+            emptyTile.textCharacters = {' ', ' '};
+            screen.setTile(x, y, emptyTile);
+        }
+    }
+
     for (const auto& segment : _snake) {
         arc::IScreen::Tile tile;
-        tile.textCharacters = {' ', ' '};  // Effacer la queue
+        tile.textCharacters = {'0', ' '};
         screen.setTile(segment.second, segment.first, tile);
     }
 
-    // Dessiner la tête du serpent
-    arc::IScreen::Tile headTile;
-    headTile.textCharacters = {'0', ' '};
-    auto head = _snake.front();
-    screen.setTile(head.second, head.first, headTile);
-
-    // Dessiner la nourriture
     arc::IScreen::Tile foodTile;
     foodTile.textCharacters = {'X', ' '};
     screen.setTile(_food.second, _food.first, foodTile);
 }
 
-unsigned int arc::SnakeGame::score() const {
+unsigned int SnakeGame::score() const {
     return _score;
 }
 
-void arc::SnakeGame::spawnFood() {
+void SnakeGame::spawnFood() {
     int x, y;
     do {
         x = rand() % 20;
@@ -136,8 +135,10 @@ void arc::SnakeGame::spawnFood() {
     _food = {x, y};
 }
 
-bool arc::SnakeGame::isCellFree(int x, int y) const {
+bool SnakeGame::isCellFree(int x, int y) const {
     return std::find(_snake.begin(), _snake.end(), std::make_pair(y, x)) == _snake.end();
+}
+
 }
 
 extern "C" arc::IGame* create() {
