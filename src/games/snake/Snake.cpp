@@ -107,16 +107,25 @@ void drawBorders(arc::IScreen& screen) {
     arc::IScreen::Tile borderTile;
     borderTile.textCharacters = {'/', ' '};
 
-    // Draw top and bottom borders
     for (int x = 0; x < size.first; x++) {
         screen.setTile(x, 0, borderTile);
         screen.setTile(x, size.second - 1, borderTile);
     }
 
-    // Draw left and right borders
     for (int y = 0; y < size.second; y++) {
         screen.setTile(0, y, borderTile);
         screen.setTile(size.first - 1, y, borderTile);
+    }
+}
+
+void drawScore(arc::IScreen& screen, unsigned int _score) {
+    auto size = screen.getSize();
+    std::string scoreStr = "Score: " + std::to_string(_score);
+
+    for (size_t i = 0; i < scoreStr.size(); ++i) {
+        arc::IScreen::Tile tile;
+        tile.textCharacters = {scoreStr[i], ' '};
+        screen.setTile(i, size.second - 1, tile);
     }
 }
 
@@ -129,6 +138,7 @@ void SnakeGame::draw(arc::IScreen& screen) {
         }
     }
     drawBorders(screen);
+    drawScore(screen, _score);
 
     for (const auto& segment : _snake) {
         arc::IScreen::Tile tile;

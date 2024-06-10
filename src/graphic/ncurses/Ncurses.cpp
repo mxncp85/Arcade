@@ -50,6 +50,9 @@ namespace arc
                 case 'q':
                     eventList.push_back(arc::Event::EventExit);
                     break;
+                case 'r':
+                    eventList.push_back(arc::Event::EventRestart);
+                    break;
                 default:
                     break;
             }
