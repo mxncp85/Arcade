@@ -17,7 +17,7 @@ NCURSE_SRC = src/graphic/ncurses/Ncurses.cpp
 NCURSE_OBJ = $(NCURSE_SRC:.cpp=.o)
 NCURSE_NAME = arcade_ncurse.so
 
-SFML_SRC = src/graphic/Sfml.cpp
+SFML_SRC = src/graphic/sfml/Sfml.cpp
 SFML_OBJ = $(SFML_SRC:.cpp=.o)
 SFML_NAME = arcade_sfml.so
 
@@ -30,13 +30,16 @@ OBJ = $(SRC:.cpp=.o)
 %.o: %.cpp
 	g++ -c $< -o $@ -fPIC
 
-all: Sprites.hpp $(NAME) $(NCURSE_NAME) $(SNAKE_NAME)
+all: Sprites.hpp $(NAME) $(NCURSE_NAME) $(SFML_NAME) $(SNAKE_NAME)
 
 $(NAME): $(OBJ)
 	g++ -o $@ $^ ${ALL_FLAGS} -g
 
 $(NCURSE_NAME): $(NCURSE_OBJ)
 	g++ -shared -o $@ $^ $(NCURSES_FLAGS) -g
+
+$(SFML_NAME): $(SFML_OBJ)
+	g++ -shared -o $@ $^ $(SFML_FLAGS) -g
 
 $(SNAKE_NAME): $(SNAKE_OBJ)
 	g++ -shared -o $@ $^ $(SNAKE_FLAGS) -g
