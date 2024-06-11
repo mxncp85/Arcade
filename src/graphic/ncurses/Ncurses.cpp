@@ -44,7 +44,7 @@ namespace arc
                 case KEY_RIGHT:
                     eventList.push_back(arc::Event::EventRight);
                     break;
-                case ' ':
+                case 's':
                     eventList.push_back(arc::Event::EventAction);
                     break;
                 case 'q':
