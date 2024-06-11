@@ -98,7 +98,16 @@ void SfmlGraphical::draw(const arc::IScreen& screen) {
 
             _window.draw(rectangle);
 
-            if (tile.textCharacters.first != ' ') {
+            if (!tile.texturePath.empty()) {
+                sf::Texture texture;
+                if (!texture.loadFromFile(tile.texturePath)) {
+                    throw arc::GraphicalException("Cannot load texture");
+                }
+
+                sf::Sprite sprite(texture);
+                sprite.setPosition(x * 20, y * 20);
+                _window.draw(sprite);
+            } else if (tile.textCharacters.first != ' ') {
                 sf::Text text;
                 text.setFont(font);
                 text.setString(tile.textCharacters.first);

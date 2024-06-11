@@ -159,6 +159,7 @@ void SnakeGame::draw(arc::IScreen& screen) {
             arc::IScreen::Tile tile;
             tile.textCharacters = {'0', ' '};
             tile.textColor = arc::Color::ColorGreen;
+            tile.texturePath = "Assets/Images/snake_body.png";
             screen.setTile(segment.second, segment.first, tile);
         }
 
