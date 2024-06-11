@@ -10,7 +10,7 @@
 namespace arc {
 
 SfmlGraphical::SfmlGraphical()
-    : _window(sf::VideoMode(800, 600), "Arcade SFML")
+    : _window(sf::VideoMode(400, 400), "Arcade SFML")
 {
     _window.setFramerateLimit(60);
     initColorMap();
