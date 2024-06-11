@@ -106,6 +106,7 @@ void drawBorders(arc::IScreen& screen) {
     auto size = screen.getSize();
     arc::IScreen::Tile borderTile;
     borderTile.textCharacters = {'/', ' '};
+    borderTile.textColor = arc::Color::ColorMagenta;
 
     for (int x = 0; x < size.first; x++) {
         screen.setTile(x, 0, borderTile);
@@ -125,6 +126,7 @@ void drawScore(arc::IScreen& screen, unsigned int _score) {
     for (size_t i = 0; i < scoreStr.size(); ++i) {
         arc::IScreen::Tile tile;
         tile.textCharacters = {scoreStr[i], ' '};
+        tile.textColor = arc::Color::ColorBlack;
         screen.setTile(i, size.second - 1, tile);
     }
 }
@@ -149,17 +151,20 @@ void SnakeGame::draw(arc::IScreen& screen) {
         for (size_t i = 0; i < gameOverStr.size(); ++i) {
             arc::IScreen::Tile tile;
             tile.textCharacters = {gameOverStr[i], ' '};
+            tile.textColor = arc::Color::ColorRed;
             screen.setTile(startX + i, startY, tile);
         }
     } else {
         for (const auto& segment : _snake) {
             arc::IScreen::Tile tile;
             tile.textCharacters = {'0', ' '};
+            tile.textColor = arc::Color::ColorGreen;
             screen.setTile(segment.second, segment.first, tile);
         }
 
         arc::IScreen::Tile foodTile;
         foodTile.textCharacters = {'X', ' '};
+        foodTile.textColor = arc::Color::ColorRed;
         screen.setTile(_food.second, _food.first, foodTile);
     }
 

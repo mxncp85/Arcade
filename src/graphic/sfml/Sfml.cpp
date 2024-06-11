@@ -77,10 +77,15 @@ std::list<arc::Event> SfmlGraphical::events() {
 
 void SfmlGraphical::draw(const arc::IScreen& screen) {
     _window.clear();
-
     sf::Font font;
-    if (!font.loadFromFile("Assets/Fonts/arial.ttf")) {
-        // Handle error...
+
+    try {
+        if (!font.loadFromFile("Assets/Fonts/arial.ttf")) {
+            throw arc::GraphicalException("Cannot load font");
+        }
+    } catch (const arc::GraphicalException& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        exit(84);
     }
 
     for (unsigned int y = 0; y < screen.getSize().second; ++y) {
@@ -89,7 +94,7 @@ void SfmlGraphical::draw(const arc::IScreen& screen) {
 
             sf::RectangleShape rectangle(sf::Vector2f(20, 20));
             rectangle.setPosition(x * 20, y * 20);
-            rectangle.setFillColor(_colorMap[tile.textColor]);
+            rectangle.setFillColor(sf::Color::White);
 
             _window.draw(rectangle);
 
@@ -98,7 +103,7 @@ void SfmlGraphical::draw(const arc::IScreen& screen) {
                 text.setFont(font);
                 text.setString(tile.textCharacters.first);
                 text.setCharacterSize(20);
-                text.setFillColor(sf::Color::Black); // Set text color to black
+                text.setFillColor(_colorMap[tile.textColor]);
                 text.setPosition(x * 20, y * 20);
 
                 _window.draw(text);
