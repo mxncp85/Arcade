@@ -12,9 +12,9 @@
 #include <string>
 #include <filesystem>
 #include <iostream>
-#include "../../../common/IGame.hpp"
-#include "../../../common/Enum.hpp"
-#include "../../../common/IScreen.hpp"
+#include "../../common/IGame.hpp"
+#include "../../common/Enum.hpp"
+#include "../../common/IScreen.hpp"
 
 namespace arc
 {
@@ -25,6 +25,7 @@ namespace arc
         ~Menu();
 
         void update(float elapsed, const std::list<arc::Event>& events) override;
+        void updateMenu(float elapsed, const std::list<arc::Event>& events, std::string *gamePath);
         void draw(arc::IScreen& screen) override;
         unsigned int score() const override;
 

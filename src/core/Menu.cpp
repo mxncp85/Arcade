@@ -26,7 +26,9 @@ void Menu::loadLibs() {
     }
 }
 
-void Menu::update(float elapsed, const std::list<arc::Event>& events) {
+void Menu::update(float elapsed, const std::list<arc::Event>& events) {}
+
+void Menu::updateMenu(float elapsed, const std::list<arc::Event>& events, std::string *gamePath) {
     for (const auto& event : events) {
         switch (event) {
             case arc::Event::EventUp:
@@ -41,6 +43,9 @@ void Menu::update(float elapsed, const std::list<arc::Event>& events) {
                 break;
             case arc::Event::EventAction:
                 // Handle selection action here
+                if (gamePath && _selectedIndex < _libs.size()) {
+                    *gamePath = _libs[_selectedIndex];
+                }
                 break;
             case arc::Event::EventExit:
                 // Handle exit action here

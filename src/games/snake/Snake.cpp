@@ -132,6 +132,7 @@ void drawScore(arc::IScreen& screen, unsigned int _score) {
 }
 
 void SnakeGame::draw(arc::IScreen& screen) {
+    screen.setSize(20,20);
     for (unsigned int y = 0; y < 20; ++y) {
         for (unsigned int x = 0; x < 20; ++x) {
             arc::IScreen::Tile emptyTile;

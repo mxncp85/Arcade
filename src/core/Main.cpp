@@ -6,6 +6,7 @@
 */
 
 #include "Main.hpp"
+#include "Menu.hpp"
 
 void *DLLoader::loadLibrary(const std::string &path)
 {
@@ -54,7 +55,7 @@ int main(int ac,  char **av)
     }
     arc::IGraphical* graphical = createFunc();
 
-    void* gameLib = loader.loadLibrary("./arcade_snake.so");
+    void* gameLib = loader.loadLibrary("./arcade_menu.so");
     if (!gameLib)
         return 84;
     typedef arc::IGame* (*create_game_t)();
@@ -67,13 +68,29 @@ int main(int ac,  char **av)
     arc::IGame* game = createFuncGame();
 
     arc::NcursesScreen screen;
-    screen.setSize(20, 20);
+    screen.setSize(50, 50);
+//////////////////////////////////////////
+    arc::Menu menu;
+    std::string path = " ";
 
+    while (1) {
+        auto events = graphical->events();
+        menu.updateMenu(0.16f, events, &path);
+        menu.draw(screen);
+        //std::cout << path << std::endl;
+        graphical->draw(screen);
+
+        if (std::find(events.begin(), events.end(), arc::Event::EventExit) != events.end()) {
+            break;
+        }
+
+        usleep(16000); // Wait for 16ms (~60fps)
+    }
+//////////////////////////////////////////
     while (1)
     {
         auto events = graphical->events();
         game->update(0.16f, events);
-        screen.setSize(20,20);
         game->draw(screen);
         graphical->draw(screen);
 

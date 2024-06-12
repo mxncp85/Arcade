@@ -7,7 +7,8 @@
 
 NCURSES_FLAGS = -lncurses
 SFML_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system
-ALL_FLAGS = ${NCURSES_FLAGS} ${SFML_FLAGS}
+CXX_FLAGS = -std=c++17 -Wall -Wextra -g
+ALL_FLAGS = ${NCURSES_FLAGS} ${SFML_FLAGS} ${CXX_FLAGS}
 
 SNAKE_SRC = src/games/snake/Snake.cpp
 SNAKE_OBJ = $(SNAKE_SRC:.cpp=.o)
@@ -21,16 +22,21 @@ SFML_SRC = src/graphic/sfml/Sfml.cpp
 SFML_OBJ = $(SFML_SRC:.cpp=.o)
 SFML_NAME = arcade_sfml.so
 
+MENU_SRC = src/games/menu/Menu.cpp
+MENU_OBJ = $(MENU_SRC:.cpp=.o)
+MENU_NAME = arcade_menu.so
+
 NAME = arcade
 SRC = 	src/core/Main.cpp	\
-		src/core/Screen.cpp
+		src/core/Screen.cpp	\
+		src/core/Menu.cpp	\
 
 OBJ = $(SRC:.cpp=.o)
 
 %.o: %.cpp
 	g++ -c $< -o $@ -fPIC
 
-all: Sprites.hpp $(NAME) $(NCURSE_NAME) $(SFML_NAME) $(SNAKE_NAME)
+all: Sprites.hpp $(NAME) $(NCURSE_NAME) $(SFML_NAME) $(SNAKE_NAME) $(MENU_NAME)
 
 $(NAME): $(OBJ)
 	g++ -o $@ $^ ${ALL_FLAGS} -g
@@ -44,10 +50,13 @@ $(SFML_NAME): $(SFML_OBJ)
 	mv $(SFML_NAME) ./lib
 
 $(SNAKE_NAME): $(SNAKE_OBJ)
-	g++ -shared -o $@ $^ $(SNAKE_FLAGS) -g
+	g++ -shared -o $@ $^ -g
 	mv $(SNAKE_NAME) ./lib
 
-core: $(NAME)
+$(MENU_NAME): $(MENU_OBJ)
+	g++ -shared -o $@ $^ -g
+
+core: $(NAME) $(MENU_NAME)
 
 games: $(SNAKE_NAME)
 
