@@ -53,6 +53,9 @@ namespace arc
                 case 'r':
                     eventList.push_back(arc::Event::EventRestart);
                     break;
+                case 'n':
+                    eventList.push_back(arc::Event::EventNextGraphical);
+                    break;
                 default:
                     break;
             }
