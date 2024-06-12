@@ -42,20 +42,49 @@ int main(int ac,  char **av)
     }
 
     DLLoader loader;
+    arc::NcursesScreen screen;
+    screen.setSize(50, 50);
 
+////////////////////////////////////////// GRAPHICAL
     void* graphicalLib = loader.loadLibrary(av[1]);
     if (!graphicalLib)
         return 84;
-    typedef arc::IGraphical* (*create_graphical_t)();
+    typedef arc::IGraphical* (*create_graphical_t)(const arc::IScreen&);
     create_graphical_t createFunc = (create_graphical_t)loader.getFunction(graphicalLib, "create");
     if (!createFunc) {
         std::cerr << "Failed to load the factory function" << std::endl;
         loader.closeLibrary(graphicalLib);
         return 84;
     }
-    arc::IGraphical* graphical = createFunc();
+    arc::IGraphical* graphical = createFunc(screen);
+//////////////////////////////////////////
 
-    void* gameLib = loader.loadLibrary("./arcade_menu.so");
+
+////////////////////////////////////////// MENU
+    arc::Menu menu;
+    std::string path = " ";
+
+    while (1) {
+        auto events = graphical->events();
+        menu.updateMenu(0.16f, events, &path);
+        menu.draw(screen);
+        graphical->draw(screen);
+
+        if (std::find(events.begin(), events.end(), arc::Event::EventExit) != events.end()) {
+            break;
+        } else if (std::find(events.begin(), events.end(), arc::Event::EventAction) != events.end()) {
+            break;
+        }
+
+        usleep(16000); // Wait for 16ms (~60fps)
+    }
+//////////////////////////////////////////
+
+if (path == " ")
+    return 0;
+
+////////////////////////////////////////// GAME
+    void* gameLib = loader.loadLibrary("./lib/" + path);
     if (!gameLib)
         return 84;
     typedef arc::IGame* (*create_game_t)();
@@ -66,27 +95,8 @@ int main(int ac,  char **av)
         return 84;
     }
     arc::IGame* game = createFuncGame();
-
-    arc::NcursesScreen screen;
-    screen.setSize(50, 50);
 //////////////////////////////////////////
-    arc::Menu menu;
-    std::string path = " ";
 
-    while (1) {
-        auto events = graphical->events();
-        menu.updateMenu(0.16f, events, &path);
-        menu.draw(screen);
-        //std::cout << path << std::endl;
-        graphical->draw(screen);
-
-        if (std::find(events.begin(), events.end(), arc::Event::EventExit) != events.end()) {
-            break;
-        }
-
-        usleep(16000); // Wait for 16ms (~60fps)
-    }
-//////////////////////////////////////////
     while (1)
     {
         auto events = graphical->events();
