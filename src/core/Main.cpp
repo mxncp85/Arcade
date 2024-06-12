@@ -6,7 +6,38 @@
 */
 
 #include "Main.hpp"
-#include "Menu.hpp"
+
+std::vector<std::string> gamesNames;
+std::vector<std::string> graphicsNames;
+
+void loadLibraries() {
+    DIR* dir;
+    struct dirent* ent;
+    if ((dir = opendir("./lib/")) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            std::string filename = "./lib/" + std::string(ent->d_name);
+            void* handle = dlopen(filename.c_str(), RTLD_LAZY);
+            if (handle) {
+                arc::IGame* (*createGame)();
+                arc::IGraphical* (*createGraphical)();
+                createGame = (arc::IGame* (*)())dlsym(handle, "createGame");
+                if (createGame) {
+                    gamesNames.push_back(filename);
+                    dlclose(handle);
+                    continue;
+                }
+                createGraphical = (arc::IGraphical* (*)())dlsym(handle, "create");
+                if (createGraphical) {
+                    graphicsNames.push_back(filename);
+                }
+                dlclose(handle);
+            }
+        }
+        closedir(dir);
+    } else {
+        perror("Could not open directory");
+    }
+}
 
 void *DLLoader::loadLibrary(const std::string &path)
 {
@@ -45,23 +76,35 @@ int main(int ac,  char **av)
     arc::NcursesScreen screen;
     screen.setSize(50, 50);
 
+    loadLibraries();
+
 ////////////////////////////////////////// GRAPHICAL
-    void* graphicalLib = loader.loadLibrary(av[1]);
+    void* graphicalLib;
+    typedef arc::IGraphical* (*create_graphical_t)(const arc::IScreen&);
+    create_graphical_t createFunc;
+    arc::IGraphical* graphical;
+
+try {
+    graphicalLib = loader.loadLibrary(av[1]);
     if (!graphicalLib)
         return 84;
-    typedef arc::IGraphical* (*create_graphical_t)(const arc::IScreen&);
-    create_graphical_t createFunc = (create_graphical_t)loader.getFunction(graphicalLib, "create");
+    
+    createFunc = (create_graphical_t)loader.getFunction(graphicalLib, "create");
     if (!createFunc) {
         std::cerr << "Failed to load the factory function" << std::endl;
         loader.closeLibrary(graphicalLib);
         return 84;
     }
-    arc::IGraphical* graphical = createFunc(screen);
+    graphical = createFunc(screen);
+} catch (const std::exception& e) {
+    std::cerr << "ARCADE - Error: " << e.what() << std::endl;
+    return 84;
+}
 //////////////////////////////////////////
 
 
 ////////////////////////////////////////// MENU
-    arc::Menu menu;
+    arc::Menu menu(gamesNames, graphicsNames);
     std::string path = " ";
 
     while (1) {
@@ -84,11 +127,11 @@ if (path == " ")
     return 0;
 
 ////////////////////////////////////////// GAME
-    void* gameLib = loader.loadLibrary("./lib/" + path);
+    void* gameLib = loader.loadLibrary(path);
     if (!gameLib)
         return 84;
     typedef arc::IGame* (*create_game_t)();
-    create_game_t createFuncGame = (create_game_t)loader.getFunction(gameLib, "create");
+    create_game_t createFuncGame = (create_game_t)loader.getFunction(gameLib, "createGame");
     if (!createFuncGame) {
         std::cerr << "Failed to load the factory function" << std::endl;
         loader.closeLibrary(gameLib);

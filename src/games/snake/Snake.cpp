@@ -192,6 +192,6 @@ bool SnakeGame::isCellFree(int x, int y) const {
 
 }
 
-extern "C" arc::IGame* create() {
+extern "C" arc::IGame* createGame() {
     return new arc::SnakeGame();
 }

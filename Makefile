@@ -22,10 +22,6 @@ SFML_SRC = src/graphic/sfml/Sfml.cpp
 SFML_OBJ = $(SFML_SRC:.cpp=.o)
 SFML_NAME = arcade_sfml.so
 
-MENU_SRC = src/games/menu/Menu.cpp
-MENU_OBJ = $(MENU_SRC:.cpp=.o)
-MENU_NAME = arcade_menu.so
-
 NAME = arcade
 SRC = 	src/core/Main.cpp	\
 		src/core/Screen.cpp	\
@@ -36,7 +32,7 @@ OBJ = $(SRC:.cpp=.o)
 %.o: %.cpp
 	g++ -c $< -o $@ -fPIC
 
-all: Sprites.hpp $(NAME) $(NCURSE_NAME) $(SFML_NAME) $(SNAKE_NAME) $(MENU_NAME)
+all: Sprites.hpp $(NAME) $(NCURSE_NAME) $(SFML_NAME) $(SNAKE_NAME)
 
 $(NAME): $(OBJ)
 	g++ -o $@ $^ ${ALL_FLAGS} -g
@@ -53,10 +49,7 @@ $(SNAKE_NAME): $(SNAKE_OBJ)
 	g++ -shared -o $@ $^ -g
 	mv $(SNAKE_NAME) ./lib
 
-$(MENU_NAME): $(MENU_OBJ)
-	g++ -shared -o $@ $^ -g
-
-core: $(NAME) $(MENU_NAME)
+core: $(NAME)
 
 games: $(SNAKE_NAME)
 

@@ -21,7 +21,7 @@ namespace arc
     class Menu : public IGame
     {
     public:
-        Menu();
+        Menu(std::vector<std::string> gamesNames, std::vector<std::string> graphicsNames);
         ~Menu();
 
         void update(float elapsed, const std::list<arc::Event>& events) override;
@@ -33,6 +33,8 @@ namespace arc
         void loadLibs();
         std::vector<std::string> _libs;
         int _selectedIndex;
+        std::vector<std::string> _gamesNames;
+        std::vector<std::string> _graphicsNames;
     };
 }
 

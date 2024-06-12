@@ -11,8 +11,9 @@ namespace fs = std::filesystem;
 
 namespace arc {
 
-Menu::Menu() : _selectedIndex(0) {
-    loadLibs();
+Menu::Menu(std::vector<std::string> gamesNames, std::vector<std::string> graphicsNames) : _selectedIndex(0) {
+    _gamesNames = gamesNames;
+    _graphicsNames = graphicsNames;
 }
 
 Menu::~Menu() {}
@@ -43,8 +44,8 @@ void Menu::updateMenu(float elapsed, const std::list<arc::Event>& events, std::s
                 break;
             case arc::Event::EventAction:
                 // Handle selection action here
-                if (gamePath && _selectedIndex < _libs.size()) {
-                    *gamePath = _libs[_selectedIndex];
+                if (gamePath && _selectedIndex < _gamesNames.size()) {
+                    *gamePath = _gamesNames[_selectedIndex];
                 }
                 break;
             case arc::Event::EventExit:
@@ -76,7 +77,7 @@ void Menu::draw(arc::IScreen& screen) {
         screen.setTile(startX + y, startY, tile);
     }
 
-    for (size_t i = 0; i < _libs.size(); ++i) {
+    for (size_t i = 0; i < _gamesNames.size(); ++i) {
         arc::IScreen::Tile tile;
 
         tile.textCharacters = { '*', ' ' };
@@ -87,13 +88,13 @@ void Menu::draw(arc::IScreen& screen) {
         screen.setTile(1, i + 1, tile);
         
         auto size = screen.getSize();
-        std::string gameOverStr = _libs[i];
+        std::string gameStr = _gamesNames[i];
         int startX = 5;
         int startY = i + 1;
 
-        for (size_t y = 0; y < gameOverStr.size(); ++y) {
+        for (size_t y = 0; y < gameStr.size(); ++y) {
             arc::IScreen::Tile tile;
-            tile.textCharacters = {gameOverStr[y], ' '};
+            tile.textCharacters = {gameStr[y], ' '};
             tile.textColor = arc::Color::ColorRed;
             screen.setTile(startX + y, startY, tile);
         }
@@ -106,6 +107,6 @@ unsigned int Menu::score() const {
 
 }
 
-extern "C" arc::IGame* create() {
-    return new arc::Menu();
+extern "C" arc::IGame* create(std::vector<std::string> gamesNames, std::vector<std::string> graphicsNames) {
+    return new arc::Menu(gamesNames, graphicsNames);
 }

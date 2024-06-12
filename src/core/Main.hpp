@@ -12,9 +12,14 @@
 #include <dlfcn.h>
 #include <algorithm>
 #include <unistd.h>
+#include <dirent.h>
+#include <dlfcn.h>
+#include <vector>
+#include <string>
 #include "../../common/IGame.hpp"
 #include "../../common/IGraphical.hpp"
 #include "Screen.hpp"
+#include "Menu.hpp"
 
 class IDLLoader {
 public:
