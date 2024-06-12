@@ -79,9 +79,10 @@ void Menu::draw(arc::IScreen& screen) {
     for (size_t i = 0; i < _libs.size(); ++i) {
         arc::IScreen::Tile tile;
 
-        tile.textCharacters = { '*', ' ' };  // Simplified example
+        tile.textCharacters = { '*', ' ' };
         if (i == _selectedIndex) {
             tile.textCharacters.first = '>';
+            tile.textColor = arc::Color::ColorGreen;
         }
         screen.setTile(1, i + 1, tile);
         
@@ -97,8 +98,6 @@ void Menu::draw(arc::IScreen& screen) {
             screen.setTile(startX + y, startY, tile);
         }
     }
-
-    
 }
 
 unsigned int Menu::score() const {
