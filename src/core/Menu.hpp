@@ -28,6 +28,7 @@ namespace arc
         void updateMenu(float elapsed, const std::list<arc::Event>& events, std::string *gamePath);
         void draw(arc::IScreen& screen) override;
         unsigned int score() const override;
+        int getSelectedIndex() const { return _selectedIndex; };
 
     private:
         void loadLibs();

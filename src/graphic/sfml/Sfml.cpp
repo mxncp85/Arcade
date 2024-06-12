@@ -64,6 +64,9 @@ std::list<arc::Event> SfmlGraphical::events() {
                     case sf::Keyboard::R:
                         eventList.push_back(arc::Event::EventRestart);
                         break;
+                    case sf::Keyboard::N:
+                        eventList.push_back(arc::Event::EventNextGraphical);
+                        break;
                     default:
                         break;
                 }

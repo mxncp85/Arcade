@@ -9,6 +9,8 @@
 
 std::vector<std::string> gamesNames;
 std::vector<std::string> graphicsNames;
+size_t currentGraphicalIndex = 0;
+size_t currentGameIndex = 0;
 
 void loadLibraries() {
     DIR* dir;
@@ -65,47 +67,33 @@ void DLLoader::closeLibrary(void* library)
     dlclose(library);
 }
 
-int main(int ac,  char **av)
-{
-    if (ac != 2) {
-        std::cerr << "Usage: ./arcade path_to_graphical_library.so" << std::endl;
-        return 84;
-    }
-
-    DLLoader loader;
-    arc::NcursesScreen screen;
-    screen.setSize(50, 50);
-
-    loadLibraries();
-
-////////////////////////////////////////// GRAPHICAL
+arc::IGraphical* loadGraphicalLibrary(const std::string& libraryPath, const arc::IScreen& screen, DLLoader& loader) {
     void* graphicalLib;
     typedef arc::IGraphical* (*create_graphical_t)(const arc::IScreen&);
     create_graphical_t createFunc;
     arc::IGraphical* graphical;
 
-try {
-    graphicalLib = loader.loadLibrary(av[1]);
-    if (!graphicalLib)
-        return 84;
-    
-    createFunc = (create_graphical_t)loader.getFunction(graphicalLib, "create");
-    if (!createFunc) {
-        std::cerr << "Failed to load the factory function" << std::endl;
+    try {
+        graphicalLib = loader.loadLibrary(libraryPath);
+        if (!graphicalLib)
+            throw std::runtime_error("Failed to load the library");
+
+        createFunc = (create_graphical_t)loader.getFunction(graphicalLib, "create");
+        if (!createFunc) {
+            loader.closeLibrary(graphicalLib);
+            throw std::runtime_error("Failed to load the factory function");
+        }
+        graphical = createFunc(screen);
+    } catch (const std::exception& e) {
+        std::cerr << "ARCADE - Error: " << e.what() << std::endl;
         loader.closeLibrary(graphicalLib);
-        return 84;
+        exit(84);
     }
-    graphical = createFunc(screen);
-} catch (const std::exception& e) {
-    std::cerr << "ARCADE - Error: " << e.what() << std::endl;
-    return 84;
+    return graphical;
 }
-//////////////////////////////////////////
 
-
-////////////////////////////////////////// MENU
+void runMenu(const std::vector<std::string>& gamesNames, const std::vector<std::string>& graphicsNames, arc::IGraphical* graphical, arc::Screen& screen, std::string& path) {
     arc::Menu menu(gamesNames, graphicsNames);
-    std::string path = " ";
 
     while (1) {
         auto events = graphical->events();
@@ -116,30 +104,77 @@ try {
         if (std::find(events.begin(), events.end(), arc::Event::EventExit) != events.end()) {
             break;
         } else if (std::find(events.begin(), events.end(), arc::Event::EventAction) != events.end()) {
+            currentGameIndex = menu.getSelectedIndex();
             break;
         }
 
         usleep(16000); // Wait for 16ms (~60fps)
     }
-//////////////////////////////////////////
+}
 
-if (path == " ")
-    return 0;
-
-////////////////////////////////////////// GAME
-    void* gameLib = loader.loadLibrary(path);
+arc::IGame* loadGameLibrary(DLLoader& loader, const std::string& path, void*& gameLib) {
+    gameLib = loader.loadLibrary(path);
     if (!gameLib)
-        return 84;
+        return nullptr;
     typedef arc::IGame* (*create_game_t)();
     create_game_t createFuncGame = (create_game_t)loader.getFunction(gameLib, "createGame");
     if (!createFuncGame) {
         std::cerr << "Failed to load the factory function" << std::endl;
         loader.closeLibrary(gameLib);
-        return 84;
+        return nullptr;
     }
     arc::IGame* game = createFuncGame();
-//////////////////////////////////////////
+    return game;
+}
 
+void switchToNextGraphicalLibrary(arc::IGraphical*& graphical, DLLoader& loader, arc::Screen& screen) {
+    currentGraphicalIndex = currentGraphicalIndex + 1;
+    if (currentGraphicalIndex >= graphicsNames.size())
+        currentGraphicalIndex = 0;
+    delete graphical;
+    //loader.closeLibrary(graphical);
+    graphical = loadGraphicalLibrary(graphicsNames[currentGraphicalIndex], screen, loader);
+}
+
+int findGraphicalIndex(const std::vector<std::string>& graphicsNames, const std::string& path) {
+    for (int i = 0; i < graphicsNames.size(); ++i) {
+        if (graphicsNames[i] == path) {
+            currentGraphicalIndex = i;
+        }
+    }
+
+}
+
+int main(int ac,  char **av)
+{
+    if (ac != 2) {
+        std::cerr << "Usage: ./arcade path_to_graphical_library.so" << std::endl;
+        return 84;
+    }
+
+    DLLoader loader;
+    arc::Screen screen;
+    screen.setSize(50, 50);
+
+    // Graphic lib
+    loadLibraries();
+    arc::IGraphical* graphical = loadGraphicalLibrary(av[1], screen, loader);
+    findGraphicalIndex(graphicsNames, av[1]);
+
+    // Menu
+    std::string path = " ";
+    runMenu(gamesNames, graphicsNames, graphical, screen, path);
+    if (path == " ")
+        return 0;
+
+    // Game
+    void* gameLib = nullptr;
+    arc::IGame* game = loadGameLibrary(loader, path, gameLib);
+    if (!game) {
+        return 84;
+    }
+
+    // Game loop
     while (1)
     {
         auto events = graphical->events();
@@ -149,15 +184,15 @@ if (path == " ")
 
         if (std::find(events.begin(), events.end(), arc::Event::EventExit) != events.end()) {
             break;
+        } else if (std::find(events.begin(), events.end(), arc::Event::EventNextGraphical) != events.end()) {
+            switchToNextGraphicalLibrary(graphical, loader, screen);
         }
 
         usleep(16000); // Wait for 16ms (~60fps)
     }
     
-    delete graphical;
-    delete game;
-    loader.closeLibrary(graphicalLib);
-    loader.closeLibrary(gameLib);
-
+    //delete graphical;
+    //delete game;
+    //loader.closeLibrary(gameLib);
     return 0;
 }

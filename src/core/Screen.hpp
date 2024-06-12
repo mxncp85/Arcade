@@ -13,10 +13,10 @@
     #include "../../common/IScreen.hpp"
 
 namespace arc {
-    class NcursesScreen : public arc::IScreen {
+    class Screen : public arc::IScreen {
         public:
-            NcursesScreen();
-            ~NcursesScreen();
+            Screen();
+            ~Screen();
 
             void setSize(unsigned int width, unsigned int height) override;
             std::pair<unsigned int, unsigned int> getSize() const override;

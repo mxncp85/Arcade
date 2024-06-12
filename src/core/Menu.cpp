@@ -38,7 +38,7 @@ void Menu::updateMenu(float elapsed, const std::list<arc::Event>& events, std::s
                 }
                 break;
             case arc::Event::EventDown:
-                if (_selectedIndex < _libs.size() - 1) {
+                if (_selectedIndex < _gamesNames.size() - 1) {
                     _selectedIndex++;
                 }
                 break;
