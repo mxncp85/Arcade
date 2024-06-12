@@ -37,12 +37,21 @@ $(NAME): $(OBJ)
 
 $(NCURSE_NAME): $(NCURSE_OBJ)
 	g++ -shared -o $@ $^ $(NCURSES_FLAGS) -g
+	mv $(NCURSE_NAME) ./lib
 
 $(SFML_NAME): $(SFML_OBJ)
 	g++ -shared -o $@ $^ $(SFML_FLAGS) -g
+	mv $(SFML_NAME) ./lib
 
 $(SNAKE_NAME): $(SNAKE_OBJ)
 	g++ -shared -o $@ $^ $(SNAKE_FLAGS) -g
+	mv $(SNAKE_NAME) ./lib
+
+core: $(NAME)
+
+games: $(SNAKE_NAME)
+
+graphicals: $(NCURSE_NAME) $(SFML_NAME)
 
 fclean:
 	rm -rf *.o
@@ -51,6 +60,7 @@ fclean:
 	rm -rf src/graphic/ncurses/*.o
 	rm -rf src/graphic/sfml/*.o
 	rm -rf src/core/*.o
+	rm -rf lib/*.so
 	rm -rf *.so
 	rm -rf arcade
 
