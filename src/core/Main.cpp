@@ -136,6 +136,14 @@ void switchToNextGraphicalLibrary(arc::IGraphical*& graphical, DLLoader& loader,
     graphical = loadGraphicalLibrary(graphicsNames[currentGraphicalIndex], screen, loader);
 }
 
+void switchToNextGameLibrary(arc::IGame*& game, DLLoader& loader, const std::string& path, void*& gameLib) {
+    currentGameIndex = currentGameIndex + 1;
+    if (currentGameIndex >= gamesNames.size())
+        currentGameIndex = 0;
+    delete game;
+    game = loadGameLibrary(loader, gamesNames[currentGameIndex], gameLib);
+}
+
 int findGraphicalIndex(const std::vector<std::string>& graphicsNames, const std::string& path) {
     for (int i = 0; i < graphicsNames.size(); ++i) {
         if (graphicsNames[i] == path) {
@@ -186,6 +194,8 @@ int main(int ac,  char **av)
             break;
         } else if (std::find(events.begin(), events.end(), arc::Event::EventNextGraphical) != events.end()) {
             switchToNextGraphicalLibrary(graphical, loader, screen);
+        }  else if (std::find(events.begin(), events.end(), arc::Event::EventNextGame) != events.end()) {
+            switchToNextGameLibrary(game, loader, path, gameLib);
         }
 
         usleep(16000); // Wait for 16ms (~60fps)
