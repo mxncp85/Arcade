@@ -45,7 +45,6 @@ int main(int ac,  char **av)
     void* graphicalLib = loader.loadLibrary(av[1]);
     if (!graphicalLib)
         return 84;
-    // Define function pointer type for the factory function
     typedef arc::IGraphical* (*create_graphical_t)();
     create_graphical_t createFunc = (create_graphical_t)loader.getFunction(graphicalLib, "create");
     if (!createFunc) {
@@ -58,7 +57,6 @@ int main(int ac,  char **av)
     void* gameLib = loader.loadLibrary("./arcade_snake.so");
     if (!gameLib)
         return 84;
-    // Define function pointer type for the factory function
     typedef arc::IGame* (*create_game_t)();
     create_game_t createFuncGame = (create_game_t)loader.getFunction(gameLib, "create");
     if (!createFuncGame) {

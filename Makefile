@@ -15,7 +15,7 @@ SNAKE_NAME = arcade_snake.so
 
 NCURSE_SRC = src/graphic/ncurses/Ncurses.cpp
 NCURSE_OBJ = $(NCURSE_SRC:.cpp=.o)
-NCURSE_NAME = arcade_ncurse.so
+NCURSE_NAME = arcade_ncurses.so
 
 SFML_SRC = src/graphic/sfml/Sfml.cpp
 SFML_OBJ = $(SFML_SRC:.cpp=.o)

@@ -100,10 +100,16 @@ void SfmlGraphical::draw(const arc::IScreen& screen) {
 
             if (!tile.texturePath.empty()) {
                 sf::Texture texture;
-                if (!texture.loadFromFile(tile.texturePath)) {
-                    throw arc::GraphicalException("Cannot load texture");
-                }
 
+                try {
+                    if (!texture.loadFromFile(tile.texturePath)) {
+                        throw arc::GraphicalException("Cannot load texture");
+                    }
+                } catch (const arc::GraphicalException& e) {
+                    std::cerr << "Error: " << e.what() << std::endl;
+                    exit(84);
+                }
+                
                 sf::Sprite sprite(texture);
                 sprite.setPosition(x * 20, y * 20);
                 _window.draw(sprite);
