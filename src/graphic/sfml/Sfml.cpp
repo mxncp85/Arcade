@@ -9,10 +9,11 @@
 
 namespace arc {
 
-SfmlGraphical::SfmlGraphical()
-    : _window(sf::VideoMode(400, 400), "Arcade SFML")
+SfmlGraphical::SfmlGraphical(const arc::IScreen& screen)
 {
+    _window.create(sf::VideoMode(screen.getSize().first * 20, screen.getSize().second * 20), "Arcade SFML");
     _window.setFramerateLimit(60);
+    
     initColorMap();
 }
 
@@ -131,6 +132,6 @@ void SfmlGraphical::draw(const arc::IScreen& screen) {
 
 } // namespace arc
 
-extern "C" arc::IGraphical* create() {
-    return new arc::SfmlGraphical();
+extern "C" arc::IGraphical* create(const arc::IScreen& screen) {
+    return new arc::SfmlGraphical(screen);
 }

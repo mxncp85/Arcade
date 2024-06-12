@@ -20,7 +20,7 @@ namespace arc
     class SfmlGraphical : public IGraphical
     {
     public:
-        SfmlGraphical();
+        SfmlGraphical(const arc::IScreen& screen);
         ~SfmlGraphical();
 
         std::list<arc::Event> events() override;
