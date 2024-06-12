@@ -40,7 +40,7 @@ void SnakeGame::moveSnake() {
         case RIGHT: head.second++; break;
     }
 
-    if (head.first < 0 || head.first >= 20 || head.second < 0 || head.second >= 20) {
+    if (head.first < 0 || head.first >= 21 || head.second < 0 || head.second >= 21) {
         _gameOver = true;
         return;
     }
@@ -63,10 +63,6 @@ void SnakeGame::checkCollision() {
 }
 
 void SnakeGame::update(float elapsed, const std::list<arc::Event>& events) {
-    if (_gameOver) {
-        return;
-    }
-
     for (const auto& event : events) {
         switch (event) {
             case arc::Event::EventLeft:
@@ -93,6 +89,10 @@ void SnakeGame::update(float elapsed, const std::list<arc::Event>& events) {
                 break;
             default: break;
         }
+    }
+
+    if (_gameOver) {
+        return;
     }
 
     _elapsedTimeSinceLastMove += elapsed;
@@ -132,9 +132,9 @@ void drawScore(arc::IScreen& screen, unsigned int _score) {
 }
 
 void SnakeGame::draw(arc::IScreen& screen) {
-    screen.setSize(20,20);
-    for (unsigned int y = 0; y < 20; ++y) {
-        for (unsigned int x = 0; x < 20; ++x) {
+    screen.setSize(22,22);
+    for (unsigned int y = 0; y < screen.getSize().second; ++y) {
+        for (unsigned int x = 0; x < screen.getSize().first; ++x) {
             arc::IScreen::Tile emptyTile;
             emptyTile.textCharacters = {' ', ' '};
             screen.setTile(x, y, emptyTile);

@@ -15,7 +15,7 @@ namespace arc
     class Ncurses : public IGraphical
     {
     public:
-        Ncurses() {
+        Ncurses(const arc::IScreen& screen) {
             initscr();
             noecho();
             cbreak();
@@ -71,6 +71,6 @@ namespace arc
     };
 }
 
-extern "C" arc::IGraphical* create() {
-    return new arc::Ncurses();
+extern "C" arc::IGraphical* create(const arc::IScreen& screen) {
+    return new arc::Ncurses(screen);
 }
