@@ -47,7 +47,8 @@ private:
     float _ghostMoveDelay;
     float _ghostsInitialDelay;
     float _pacmanMoveDelay;
-    int _lives = 3;
+    int _lives;
+    int _totalFood;
     std::vector<std::pair<int, int>> _ghostPositions;
     std::vector<Direction> _ghostDirections;
 };

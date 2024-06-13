@@ -9,7 +9,7 @@
 
 namespace arc {
 
-PacmanGame::PacmanGame() : _score(0), _gameOver(false), _elapsedTimeSinceLastMove(0), _elapsedTimeSinceLastPacmanMove(0), _ghostMoveDelay(5.0f), _pacmanMoveDelay(3.0f), _ghostsInitialDelay(100.0f) {
+PacmanGame::PacmanGame() : _score(0), _gameOver(false), _elapsedTimeSinceLastMove(0), _elapsedTimeSinceLastPacmanMove(0), _ghostMoveDelay(5.0f), _pacmanMoveDelay(3.0f), _ghostsInitialDelay(100.0f), _lives(3), _totalFood(165) {
     srand(time(NULL));
     reset();
 }
@@ -48,6 +48,7 @@ void PacmanGame::reset() {
     _lives = 3;
     _ghostPositions = {{9, 8}, {9, 9}, {10, 8}, {10, 9}};
     _ghostDirections = {LEFT, RIGHT, UP, DOWN};
+    _totalFood = 165;
 }
 
 void PacmanGame::movePacman() {
@@ -65,6 +66,7 @@ void PacmanGame::movePacman() {
         if (_map[_pacmanPosition.first][_pacmanPosition.second] == '.') {
             _map[_pacmanPosition.first][_pacmanPosition.second] = ' ';
             _score += 1;
+            _totalFood--;
         }
     }
 }
@@ -119,7 +121,7 @@ void PacmanGame::update(float elapsed, const std::list<arc::Event>& events) {
         return;
     }
 
-    if (_score == 169) {
+    if (_totalFood == 0) {
         reset();
         return;
     }
