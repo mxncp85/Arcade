@@ -146,13 +146,14 @@ void drawText(arc::IScreen& screen, int y, std::string str) {
 }
 
 void PacmanGame::draw(arc::IScreen& screen) {
+    screen.setSize(50, 50);
     auto [width, height] = screen.getSize();
 
     for (unsigned int y = 0; y < height; ++y) {
         for (unsigned int x = 0; x < width; ++x) {
             arc::IScreen::Tile emptyTile;
             emptyTile.textCharacters = {' ', ' '};
-            emptyTile.texturePath = "Assets/Images/background_empty.png";
+            //emptyTile.texturePath = "Assets/Images/background_empty.png";
             screen.setTile(x, y, emptyTile);
         }
     }
@@ -186,7 +187,8 @@ void PacmanGame::draw(arc::IScreen& screen) {
         }
     }
     drawText(screen, 23, "Score: " + std::to_string(_score));
-    drawText(screen, 24, "Lives: " + std::to_string(_lives));
+    drawText(screen, 25, "Lives: " + std::to_string(_lives));
+    drawText(screen, 27, "Keybinds: < ^ v >");
     // Draw Pacman
     arc::IScreen::Tile pacmanTile;
     pacmanTile.textCharacters = {'P', ' '};
