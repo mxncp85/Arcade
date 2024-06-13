@@ -45,6 +45,7 @@ private:
     float _elapsedTimeSinceLastMove;
     float _elapsedTimeSinceLastPacmanMove;
     float _ghostMoveDelay;
+    float _ghostsInitialDelay;
     float _pacmanMoveDelay;
     int _lives = 3;
     std::vector<std::pair<int, int>> _ghostPositions;

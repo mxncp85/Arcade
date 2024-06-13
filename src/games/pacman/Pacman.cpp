@@ -9,7 +9,7 @@
 
 namespace arc {
 
-PacmanGame::PacmanGame() : _score(0), _gameOver(false), _elapsedTimeSinceLastMove(0), _elapsedTimeSinceLastPacmanMove(0), _ghostMoveDelay(5.0f), _pacmanMoveDelay(3.0f) {
+PacmanGame::PacmanGame() : _score(0), _gameOver(false), _elapsedTimeSinceLastMove(0), _elapsedTimeSinceLastPacmanMove(0), _ghostMoveDelay(5.0f), _pacmanMoveDelay(3.0f), _ghostsInitialDelay(100.0f) {
     srand(time(NULL));
     reset();
 }
@@ -82,6 +82,11 @@ void PacmanGame::checkCollisions() {
 }
 
 void PacmanGame::updateGhosts(float elapsed) {
+    _ghostsInitialDelay -= elapsed;
+    if (_ghostsInitialDelay > 0) {
+        return;
+    }
+
     _elapsedTimeSinceLastMove += elapsed;
 
     if (_elapsedTimeSinceLastMove < _ghostMoveDelay) {
@@ -140,7 +145,7 @@ void drawText(arc::IScreen& screen, int y, std::string str) {
     for (size_t i = 0; i < str.size(); ++i) {
         arc::IScreen::Tile tile;
         tile.textCharacters = {str[i], ' '};
-        tile.textColor = arc::Color::ColorRed;
+        tile.textColor = arc::Color::ColorBlack;
         screen.setTile(i, y, tile);
     }
 }
@@ -187,7 +192,7 @@ void PacmanGame::draw(arc::IScreen& screen) {
         }
     }
     drawText(screen, 23, "Score: " + std::to_string(_score));
-    drawText(screen, 25, "Lives: " + std::to_string(_lives));
+    drawText(screen, 25, "Lifes: " + std::to_string(_lives));
     drawText(screen, 27, "Keybinds: < ^ v >");
     // Draw Pacman
     arc::IScreen::Tile pacmanTile;
