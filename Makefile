@@ -36,7 +36,7 @@ OBJ = $(SRC:.cpp=.o)
 %.o: %.cpp
 	g++ -c $< -o $@ -fPIC
 
-all: Sprites.hpp $(NAME) $(NCURSE_NAME) $(SFML_NAME) $(SNAKE_NAME) $(PACMAN_NAME)
+all: $(NAME) $(NCURSE_NAME) $(SFML_NAME) $(SNAKE_NAME) $(PACMAN_NAME)
 
 $(NAME): $(OBJ)
 	g++ -o $@ $^ ${ALL_FLAGS} -g
@@ -75,32 +75,3 @@ fclean:
 	rm -rf arcade
 
 re: fclean all
-
-Sprites.hpp: Assets/assets.csv
-	@echo "Generating $@ from [$^]"
-	@touch $@
-	@chmod +w $@
-	@echo -e "/*\n** EPITECH PROJECT, 2024\n** Arcade\n** File" \
-	"description:\n** Auto-generated file that lists all available" \
-	"assets\n** Do not modify by hand.\n*/" > $@
-	@echo >> $@
-	@echo '#include <array>' >> $@
-	@echo '#include <string>' >> $@
-	@echo >> $@
-	@echo "#ifndef SPRITES_HPP_" >> $@
-	@echo "#define SPRITES_HPP_" >> $@
-	@echo >> $@
-	@echo 'namespace arca {' >> $@
-	@echo '    enum SpriteId {' >> $@
-	@awk -F ',' '{print "        " $$2 " = " NR-1 ","}' $^ >> $@
-	@echo >> $@
-	@echo '        SPRITE_COUNT,' >> $@
-	@echo '    };' >> $@
-	@echo >> $@
-	@echo '    const std::array<std::string, SPRITE_COUNT> assetNames = {' >> $@
-	@awk -F ',' '{print "        " $$1 ","}' $^ >> $@
-	@echo '    };' >> $@
-	@echo '}' >> $@
-	@echo >> $@
-	@echo "#endif /* !SPRITES_HPP_ */" >> $@
-	@chmod -w $@
