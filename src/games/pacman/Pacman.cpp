@@ -19,7 +19,7 @@ PacmanGame::~PacmanGame() {}
 void PacmanGame::reset() {
     _map = {
         "#####################",
-        "#........#..........#",
+        "#.........#.........#",
         "#.###.###.#.###.###.#",
         "#.###.###.#.###.###.#",
         "#...................#",
@@ -27,8 +27,11 @@ void PacmanGame::reset() {
         "#.....#...#...#.....#",
         "#####.### # ###.#####",
         "    #.#       #.#    ",
+        "    #.#       #.#    ",
+        "    #.#       #.#    ",
+        "    #.#       #.#    ",
         "#####.# ## ## #.#####",
-        "#........#.........#",
+        "#........#..........#",
         "#.###.###..####.###.#",
         "#...#...........#...#",
         "###.#.#.#####.#.#.###",
@@ -38,12 +41,12 @@ void PacmanGame::reset() {
         "#####################"
     };
 
-    _pacmanPosition = {9, 9};
+    _pacmanPosition = {9, 10};
     _pacmanDirection = RIGHT;
     _score = 0;
     _gameOver = false;
     _lives = 3;
-    _ghostPositions = {{8, 8}, {8, 10}, {10, 8}, {10, 10}};
+    _ghostPositions = {{9, 8}, {9, 9}, {10, 8}, {10, 9}};
     _ghostDirections = {LEFT, RIGHT, UP, DOWN};
 }
 
@@ -140,6 +143,7 @@ void PacmanGame::draw(arc::IScreen& screen) {
         for (unsigned int x = 0; x < width; ++x) {
             arc::IScreen::Tile emptyTile;
             emptyTile.textCharacters = {' ', ' '};
+            emptyTile.texturePath = "Assets/Images/background_empty.png";
             screen.setTile(x, y, emptyTile);
         }
     }
@@ -155,14 +159,17 @@ void PacmanGame::draw(arc::IScreen& screen) {
             switch (_map[y][x]) {
                 case '#':
                     tile.textCharacters = {'#', ' '};
+                    tile.texturePath = "Assets/Images/pacman_border.png";
                     tile.textColor = arc::Color::ColorBlue;
                     break;
                 case '.':
                     tile.textCharacters = {'.', ' '};
+                    tile.texturePath = "Assets/Images/dot_pacman.png";
                     tile.textColor = arc::Color::ColorWhite;
                     break;
                 default:
                     tile.textCharacters = {' ', ' '};
+                    tile.texturePath = "Assets/Images/background_empty.png";
                     tile.textColor = arc::Color::ColorBlack;
                     break;
             }
@@ -173,12 +180,14 @@ void PacmanGame::draw(arc::IScreen& screen) {
     arc::IScreen::Tile pacmanTile;
     pacmanTile.textCharacters = {'P', ' '};
     pacmanTile.textColor = arc::Color::ColorYellow;
+    pacmanTile.texturePath = "Assets/Images/pacman.png";
     screen.setTile(_pacmanPosition.second, _pacmanPosition.first, pacmanTile);
     
     // Draw Ghosts
     arc::IScreen::Tile ghostTile;
     ghostTile.textCharacters = {'G', ' '};
     ghostTile.textColor = arc::Color::ColorRed;
+    ghostTile.texturePath = "Assets/Images/ghost.png";
     for (const auto& ghost : _ghostPositions) {
         screen.setTile(ghost.second, ghost.first, ghostTile);
     }
