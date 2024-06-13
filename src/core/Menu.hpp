@@ -39,5 +39,4 @@ namespace arc
     };
 }
 
-
 #endif /* !MENU_H_ */

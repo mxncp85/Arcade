@@ -17,11 +17,13 @@ SfmlGraphical::SfmlGraphical(const arc::IScreen& screen)
     initColorMap();
 }
 
-SfmlGraphical::~SfmlGraphical() {
+SfmlGraphical::~SfmlGraphical()
+{
     _window.close();
 }
 
-void SfmlGraphical::initColorMap() {
+void SfmlGraphical::initColorMap()
+{
     _colorMap[arc::Color::ColorBlack] = sf::Color::Black;
     _colorMap[arc::Color::ColorRed] = sf::Color::Red;
     _colorMap[arc::Color::ColorGreen] = sf::Color::Green;
@@ -32,7 +34,8 @@ void SfmlGraphical::initColorMap() {
     _colorMap[arc::Color::ColorWhite] = sf::Color::White;
 }
 
-std::list<arc::Event> SfmlGraphical::events() {
+std::list<arc::Event> SfmlGraphical::events()
+{
     std::list<arc::Event> eventList;
     sf::Event event;
 
@@ -85,7 +88,8 @@ std::list<arc::Event> SfmlGraphical::events() {
     return eventList;
 }
 
-void SfmlGraphical::draw(const arc::IScreen& screen) {
+void SfmlGraphical::draw(const arc::IScreen& screen)
+{
     _window.clear();
     sf::Font font;
 
@@ -139,8 +143,9 @@ void SfmlGraphical::draw(const arc::IScreen& screen) {
     _window.display();
 }
 
-} // namespace arc
+}
 
-extern "C" arc::IGraphical* create(const arc::IScreen& screen) {
+extern "C" arc::IGraphical* create(const arc::IScreen& screen)
+{
     return new arc::SfmlGraphical(screen);
 }

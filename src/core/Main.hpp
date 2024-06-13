@@ -36,8 +36,4 @@ class DLLoader : public IDLLoader {
         void closeLibrary(void* library) override;
 };
 
-namespace core {
-
-};
-
 #endif /* !MAIN_H_ */

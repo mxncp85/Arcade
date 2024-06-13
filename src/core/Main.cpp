@@ -12,9 +12,11 @@ std::vector<std::string> graphicsNames;
 size_t currentGraphicalIndex = 0;
 size_t currentGameIndex = 0;
 
-void loadLibraries() {
+void loadLibraries()
+{
     DIR* dir;
     struct dirent* ent;
+
     if ((dir = opendir("./lib/")) != NULL) {
         while ((ent = readdir(dir)) != NULL) {
             std::string filename = "./lib/" + std::string(ent->d_name);
@@ -44,10 +46,11 @@ void loadLibraries() {
 void *DLLoader::loadLibrary(const std::string &path)
 {
     void* lib = dlopen(path.c_str(), RTLD_LAZY);
-        if (!lib) {
-            std::cerr << "Cannot open library: " << dlerror() << '\n';
-        }
-        return lib;
+
+    if (!lib) {
+        std::cerr << "Cannot open library: " << dlerror() << '\n';
+    }
+    return lib;
 }
 
 void* DLLoader::getFunction(void* library, const std::string& functionName)
@@ -55,6 +58,7 @@ void* DLLoader::getFunction(void* library, const std::string& functionName)
     dlerror();
     void* func = dlsym(library, functionName.c_str());
     const char *dlsym_error = dlerror();
+
     if (dlsym_error) {
         std::cerr << "Cannot load symbol '" << functionName << "': " << dlsym_error << '\n';
         dlclose(library);
@@ -67,7 +71,8 @@ void DLLoader::closeLibrary(void* library)
     dlclose(library);
 }
 
-arc::IGraphical* loadGraphicalLibrary(const std::string& libraryPath, const arc::IScreen& screen, DLLoader& loader) {
+arc::IGraphical* loadGraphicalLibrary(const std::string& libraryPath, const arc::IScreen& screen, DLLoader& loader)
+{
     void* graphicalLib;
     typedef arc::IGraphical* (*create_graphical_t)(const arc::IScreen&);
     create_graphical_t createFunc;
@@ -92,16 +97,18 @@ arc::IGraphical* loadGraphicalLibrary(const std::string& libraryPath, const arc:
     return graphical;
 }
 
-void switchToNextGraphicalLibrary(arc::IGraphical*& graphical, DLLoader& loader, arc::Screen& screen) {
+void switchToNextGraphicalLibrary(arc::IGraphical*& graphical, DLLoader& loader, arc::Screen& screen)
+{
     currentGraphicalIndex = currentGraphicalIndex + 1;
     if (currentGraphicalIndex >= graphicsNames.size())
         currentGraphicalIndex = 0;
     delete graphical;
-    //loader.closeLibrary(graphical);
     graphical = loadGraphicalLibrary(graphicsNames[currentGraphicalIndex], screen, loader);
 }
 
-void runMenu(const std::vector<std::string>& gamesNames, const std::vector<std::string>& graphicsNames, arc::IGraphical* graphical, arc::Screen& screen, std::string& path, DLLoader& loader) {
+void runMenu(const std::vector<std::string>& gamesNames, const std::vector<std::string>& graphicsNames,
+    arc::IGraphical* graphical, arc::Screen& screen, std::string& path, DLLoader& loader)
+{
     arc::Menu menu(gamesNames, graphicsNames);
 
     while (1) {
@@ -109,7 +116,6 @@ void runMenu(const std::vector<std::string>& gamesNames, const std::vector<std::
         menu.updateMenu(0.16f, events, &path);
         menu.draw(screen);
         graphical->draw(screen);
-
         if (std::find(events.begin(), events.end(), arc::Event::EventExit) != events.end()) {
             exit(0);
             break;
@@ -117,12 +123,12 @@ void runMenu(const std::vector<std::string>& gamesNames, const std::vector<std::
             currentGameIndex = menu.getSelectedIndex();
             break;
         }
-
         usleep(16000); // Wait for 16ms (~60fps)
     }
 }
 
-arc::IGame* loadGameLibrary(DLLoader& loader, const std::string& path, void*& gameLib) {
+arc::IGame* loadGameLibrary(DLLoader& loader, const std::string& path, void*& gameLib)
+{
     gameLib = loader.loadLibrary(path);
     if (!gameLib)
         return nullptr;
@@ -137,7 +143,8 @@ arc::IGame* loadGameLibrary(DLLoader& loader, const std::string& path, void*& ga
     return game;
 }
 
-void switchToNextGameLibrary(arc::IGame*& game, DLLoader& loader, const std::string& path, void*& gameLib) {
+void switchToNextGameLibrary(arc::IGame*& game, DLLoader& loader, const std::string& path, void*& gameLib)
+{
     currentGameIndex = currentGameIndex + 1;
     if (currentGameIndex >= gamesNames.size())
         currentGameIndex = 0;
@@ -145,7 +152,8 @@ void switchToNextGameLibrary(arc::IGame*& game, DLLoader& loader, const std::str
     game = loadGameLibrary(loader, gamesNames[currentGameIndex], gameLib);
 }
 
-void findGraphicalIndex(const std::vector<std::string>& graphicsNames, const std::string& path) {
+void findGraphicalIndex(const std::vector<std::string>& graphicsNames, const std::string& path)
+{
     for (int i = 0; i < graphicsNames.size(); ++i) {
         if (graphicsNames[i] == path) {
             currentGraphicalIndex = i;
@@ -153,7 +161,9 @@ void findGraphicalIndex(const std::vector<std::string>& graphicsNames, const std
     }
 }
 
-void runGameLoop(arc::IGraphical*& graphical, arc::IGame*& game, DLLoader& loader, arc::Screen& screen, std::string& path, void*& gameLib) {
+void runGameLoop(arc::IGraphical*& graphical, arc::IGame*& game, DLLoader& loader,
+    arc::Screen& screen, std::string& path, void*& gameLib)
+{
     while (1)
     {
         auto events = graphical->events();

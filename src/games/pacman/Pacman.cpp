@@ -11,7 +11,8 @@ namespace arc {
 
 PacmanGame::PacmanGame() : _score(0), _gameOver(false), _elapsedTimeSinceLastMove(0),
     _elapsedTimeSinceLastPacmanMove(0), _ghostMoveDelay(3.0f), _pacmanMoveDelay(1.0f),
-    _ghostsInitialDelay(100.0f), _lives(3), _totalFood(165) {
+    _ghostsInitialDelay(100.0f), _lives(3), _totalFood(165)
+{
     srand(time(NULL));
     reset();
     _pacgumsPositions.clear();
@@ -27,7 +28,8 @@ PacmanGame::PacmanGame() : _score(0), _gameOver(false), _elapsedTimeSinceLastMov
 
 PacmanGame::~PacmanGame() {}
 
-void PacmanGame::reset() {
+void PacmanGame::reset()
+{
     _map = {
         "#####################",
         "#.........#.........#",
@@ -72,7 +74,8 @@ void PacmanGame::reset() {
     }
 }
 
-void PacmanGame::movePacman() {
+void PacmanGame::movePacman()
+{
     std::pair<int, int> nextPosition = _pacmanPosition;
 
     switch (_pacmanDirection) {
@@ -81,7 +84,6 @@ void PacmanGame::movePacman() {
         case LEFT: nextPosition.second--; break;
         case RIGHT: nextPosition.second++; break;
     }
-
     if (_map[nextPosition.first][nextPosition.second] != '#') {
         _pacmanPosition = nextPosition;
         if (_map[_pacmanPosition.first][_pacmanPosition.second] == '.') {
@@ -90,7 +92,6 @@ void PacmanGame::movePacman() {
             _totalFood--;
         }
     }
-
     auto it = std::find(_pacgumsPositions.begin(), _pacgumsPositions.end(), nextPosition);
     if (it != _pacgumsPositions.end()) {
         _pacgumsPositions.erase(it);
@@ -100,7 +101,8 @@ void PacmanGame::movePacman() {
     }
 }
 
-void PacmanGame::checkCollisions() {
+void PacmanGame::checkCollisions()
+{
     for (const auto& ghost : _ghostPositions) {
         if (_pacmanPosition == ghost && !_powerMode) {
             _lives--;
@@ -112,7 +114,8 @@ void PacmanGame::checkCollisions() {
     }
 }
 
-void PacmanGame::updateGhosts(float elapsed) {
+void PacmanGame::updateGhosts(float elapsed)
+{
     _ghostsInitialDelay -= elapsed;
 
     if (_powerMode) {
@@ -154,7 +157,8 @@ void PacmanGame::updateGhosts(float elapsed) {
     }
 }
 
-void PacmanGame::update(float elapsed, const std::list<arc::Event>& events) {
+void PacmanGame::update(float elapsed, const std::list<arc::Event>& events)
+{
     if (_gameOver) {
         return;
     }
@@ -194,7 +198,8 @@ void PacmanGame::update(float elapsed, const std::list<arc::Event>& events) {
     }
 }
 
-void drawText(arc::IScreen& screen, int y, std::string str) {
+void drawText(arc::IScreen& screen, int y, std::string str)
+{
     for (size_t i = 0; i < str.size(); ++i) {
         arc::IScreen::Tile tile;
         tile.textCharacters = {str[i], ' '};
@@ -203,7 +208,8 @@ void drawText(arc::IScreen& screen, int y, std::string str) {
     }
 }
 
-void PacmanGame::draw(arc::IScreen& screen) {
+void PacmanGame::draw(arc::IScreen& screen)
+{
     screen.setSize(50, 50);
     auto [width, height] = screen.getSize();
 
@@ -270,6 +276,7 @@ void PacmanGame::draw(arc::IScreen& screen) {
         screen.setTile(ghost.second, ghost.first, ghostTile);
     }
 
+    // Draw Pacgums
     arc::IScreen::Tile pacgumTile;
     pacgumTile.textCharacters = {'0', ' '};
     pacgumTile.textColor = arc::Color::ColorWhite;
@@ -279,12 +286,14 @@ void PacmanGame::draw(arc::IScreen& screen) {
     }
 }
 
-unsigned int PacmanGame::score() const {
+unsigned int PacmanGame::score() const
+{
     return _score;
 }
 
 }
 
-extern "C" arc::IGame* createGame() {
+extern "C" arc::IGame* createGame()
+{
     return new arc::PacmanGame();
 }

@@ -12,14 +12,17 @@
 
 namespace arc {
 
-SnakeGame::SnakeGame() : _score(0), _direction(RIGHT), _gameOver(false), _speed(1.3f), _elapsedTimeSinceLastMove(0) {
+SnakeGame::SnakeGame()
+    : _score(0), _direction(RIGHT), _gameOver(false), _speed(1.3f), _elapsedTimeSinceLastMove(0)
+{
     srand(time(NULL));
     reset();
 }
 
 SnakeGame::~SnakeGame() {}
 
-void SnakeGame::reset() {
+void SnakeGame::reset()
+{
     _score = 0;
     _direction = RIGHT;
     _snake.clear();
@@ -31,7 +34,8 @@ void SnakeGame::reset() {
     spawnFood();
 }
 
-void SnakeGame::moveSnake() {
+void SnakeGame::moveSnake()
+{
     auto head = _snake.front();
     switch (_direction) {
         case UP: head.first--; break;
@@ -55,14 +59,16 @@ void SnakeGame::moveSnake() {
     checkCollision();
 }
 
-void SnakeGame::checkCollision() {
+void SnakeGame::checkCollision()
+{
     auto head = _snake.front();
     if (std::find(_snake.begin() + 1, _snake.end(), head) != _snake.end()) {
         _gameOver = true;
     }
 }
 
-void SnakeGame::update(float elapsed, const std::list<arc::Event>& events) {
+void SnakeGame::update(float elapsed, const std::list<arc::Event>& events)
+{
     for (const auto& event : events) {
         switch (event) {
             case arc::Event::EventLeft:
@@ -102,7 +108,8 @@ void SnakeGame::update(float elapsed, const std::list<arc::Event>& events) {
     }
 }
 
-void drawBorders(arc::IScreen& screen) {
+void drawBorders(arc::IScreen& screen)
+{
     auto size = screen.getSize();
     arc::IScreen::Tile borderTile;
     borderTile.textCharacters = {'/', ' '};
@@ -120,7 +127,8 @@ void drawBorders(arc::IScreen& screen) {
     }
 }
 
-void drawScore(arc::IScreen& screen, unsigned int _score) {
+void drawScore(arc::IScreen& screen, unsigned int _score)
+{
     auto size = screen.getSize();
     std::string scoreStr = "Score: " + std::to_string(_score);
 
@@ -132,7 +140,8 @@ void drawScore(arc::IScreen& screen, unsigned int _score) {
     }
 }
 
-void SnakeGame::draw(arc::IScreen& screen) {
+void SnakeGame::draw(arc::IScreen& screen)
+{
     screen.setSize(22,22);
     for (unsigned int y = 0; y < screen.getSize().second; ++y) {
         for (unsigned int x = 0; x < screen.getSize().first; ++x) {
@@ -171,15 +180,15 @@ void SnakeGame::draw(arc::IScreen& screen) {
         foodTile.texturePath = "Assets/Images/apple.png";
         screen.setTile(_food.second, _food.first, foodTile);
     }
-
-    
 }
 
-unsigned int SnakeGame::score() const {
+unsigned int SnakeGame::score() const
+{
     return _score;
 }
 
-void SnakeGame::spawnFood() {
+void SnakeGame::spawnFood()
+{
     int x, y;
     do {
         x = rand() % 18 + 1;
@@ -188,12 +197,14 @@ void SnakeGame::spawnFood() {
     _food = {x, y};
 }
 
-bool SnakeGame::isCellFree(int x, int y) const {
+bool SnakeGame::isCellFree(int x, int y) const
+{
     return std::find(_snake.begin(), _snake.end(), std::make_pair(y, x)) == _snake.end();
 }
 
 }
 
-extern "C" arc::IGame* createGame() {
+extern "C" arc::IGame* createGame()
+{
     return new arc::SnakeGame();
 }
