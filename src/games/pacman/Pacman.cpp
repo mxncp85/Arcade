@@ -119,6 +119,11 @@ void PacmanGame::update(float elapsed, const std::list<arc::Event>& events) {
         return;
     }
 
+    if (_score == 169) {
+        reset();
+        return;
+    }
+
     for (const auto& event : events) {
         switch (event) {
             case arc::Event::EventUp: _pacmanDirection = UP; break;
