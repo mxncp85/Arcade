@@ -17,6 +17,7 @@ namespace arc
         EventPreviousGraphical,
         EventNextGraphical,
         EventRestart,
+        EventBackToMenu,
         EventExit
     };
 

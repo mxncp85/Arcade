@@ -59,6 +59,9 @@ namespace arc
                 case 'p':
                     eventList.push_back(arc::Event::EventNextGame);
                     break;
+                case 'm':
+                    eventList.push_back(arc::Event::EventBackToMenu);
+                    break;
                 default:
                     break;
             }

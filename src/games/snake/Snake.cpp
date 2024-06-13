@@ -107,6 +107,7 @@ void drawBorders(arc::IScreen& screen) {
     arc::IScreen::Tile borderTile;
     borderTile.textCharacters = {'/', ' '};
     borderTile.textColor = arc::Color::ColorMagenta;
+    borderTile.texturePath = "Assets/Images/border.png";
 
     for (int x = 0; x < size.first; x++) {
         screen.setTile(x, 0, borderTile);
@@ -160,13 +161,14 @@ void SnakeGame::draw(arc::IScreen& screen) {
             arc::IScreen::Tile tile;
             tile.textCharacters = {'0', ' '};
             tile.textColor = arc::Color::ColorGreen;
-            tile.texturePath = "Assets/Images/snake_body.png";
+            tile.texturePath = "Assets/Images/snake_body2.png";
             screen.setTile(segment.second, segment.first, tile);
         }
 
         arc::IScreen::Tile foodTile;
         foodTile.textCharacters = {'X', ' '};
         foodTile.textColor = arc::Color::ColorRed;
+        foodTile.texturePath = "Assets/Images/apple.png";
         screen.setTile(_food.second, _food.first, foodTile);
     }
 

@@ -58,8 +58,9 @@ void Menu::updateMenu(float elapsed, const std::list<arc::Event>& events, std::s
 }
 
 void Menu::draw(arc::IScreen& screen) {
-    for (unsigned int y = 0; y < 50; ++y) {
-        for (unsigned int x = 0; x < 50; ++x) {
+    screen.setSize(50, 50);
+    for (unsigned int y = 0; y < screen.getSize().second; ++y) {
+        for (unsigned int x = 0; x < screen.getSize().first; ++x) {
             arc::IScreen::Tile emptyTile;
             emptyTile.textCharacters = {' ', ' '};
             screen.setTile(x, y, emptyTile);
