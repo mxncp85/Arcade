@@ -69,6 +69,7 @@ namespace arc
         }
 
         void draw(const arc::IScreen& screen) override {
+            clear();
             for (unsigned int y = 0; y < screen.getSize().second; ++y) {
                 for (unsigned int x = 0; x < screen.getSize().first; ++x) {
                     const auto& tile = screen.getTile(x, y);
