@@ -114,6 +114,16 @@ void PacmanGame::checkCollisions() {
 
 void PacmanGame::updateGhosts(float elapsed) {
     _ghostsInitialDelay -= elapsed;
+
+    if (_powerMode) {
+        for (auto& ghost : _ghostPositions) {
+            if (ghost == _pacmanPosition) {
+                ghost = {9, 8};
+                _score += 50;
+            }
+        }
+    }
+
     if (_ghostsInitialDelay > 0) {
         return;
     }
@@ -140,15 +150,6 @@ void PacmanGame::updateGhosts(float elapsed) {
             _ghostPositions[i] = nextPosition;
         } else {
             _ghostDirections[i] = static_cast<Direction>(rand() % 4);
-        }
-
-        if (_powerMode) {
-            for (auto& ghost : _ghostPositions) {
-                if (ghost == _pacmanPosition) {
-                    ghost = {9, 8};
-                    _score += 50;
-                }
-            }
         }
     }
 }
