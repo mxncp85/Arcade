@@ -214,8 +214,9 @@ int main(int ac,  char **av)
     // Game loop
     runGameLoop(graphical, game, loader, screen, path, gameLib);
     
-    //delete graphical;
-    //delete game;
-    //loader.closeLibrary(gameLib);
+    delete graphical;
+    delete game;
+    loader.closeLibrary(gameLib);
+    loader.closeLibrary(graphical);
     return 0;
 }
