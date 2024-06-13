@@ -41,7 +41,7 @@ void PacmanGame::reset() {
         "#####################"
     };
 
-    _pacmanPosition = {9, 10};
+    _pacmanPosition = {13, 10};
     _pacmanDirection = RIGHT;
     _score = 0;
     _gameOver = false;
@@ -64,7 +64,7 @@ void PacmanGame::movePacman() {
         _pacmanPosition = nextPosition;
         if (_map[_pacmanPosition.first][_pacmanPosition.second] == '.') {
             _map[_pacmanPosition.first][_pacmanPosition.second] = ' ';
-            _score += 10;
+            _score += 1;
         }
     }
 }
@@ -136,6 +136,15 @@ void PacmanGame::update(float elapsed, const std::list<arc::Event>& events) {
     checkCollisions();
 }
 
+void drawText(arc::IScreen& screen, int y, std::string str) {
+    for (size_t i = 0; i < str.size(); ++i) {
+        arc::IScreen::Tile tile;
+        tile.textCharacters = {str[i], ' '};
+        tile.textColor = arc::Color::ColorRed;
+        screen.setTile(i, y, tile);
+    }
+}
+
 void PacmanGame::draw(arc::IScreen& screen) {
     auto [width, height] = screen.getSize();
 
@@ -176,6 +185,8 @@ void PacmanGame::draw(arc::IScreen& screen) {
             screen.setTile(x, y, tile);
         }
     }
+    drawText(screen, 23, "Score: " + std::to_string(_score));
+    drawText(screen, 24, "Lives: " + std::to_string(_lives));
     // Draw Pacman
     arc::IScreen::Tile pacmanTile;
     pacmanTile.textCharacters = {'P', ' '};
