@@ -7,11 +7,10 @@
 
 #include "Pacman.hpp"
 
-int _lives = 3;
-
 namespace arc {
 
-PacmanGame::PacmanGame() : _score(0), _gameOver(false), _elapsedTimeSinceLastMove(0), _ghostMoveDelay(1.0f) {
+PacmanGame::PacmanGame() : _score(0), _gameOver(false), _elapsedTimeSinceLastMove(0), _elapsedTimeSinceLastPacmanMove(0), _ghostMoveDelay(5.0f), _pacmanMoveDelay(3.0f) {
+    srand(time(NULL));
     reset();
 }
 
@@ -30,20 +29,20 @@ void PacmanGame::reset() {
         "    #.#       #.#    ",
         "#####.# ## ## #.#####",
         "#........#.........#",
-        "#.###.###.#.###.###.#",
+        "#.###.###..####.###.#",
         "#...#...........#...#",
         "###.#.#.#####.#.#.###",
         "#.....#...#...#.....#",
         "#.#######.#.#######.#",
         "#...................#",
-        "####################"
+        "#####################"
     };
 
     _pacmanPosition = {9, 9};
     _pacmanDirection = RIGHT;
     _score = 0;
     _gameOver = false;
-
+    _lives = 3;
     _ghostPositions = {{8, 8}, {8, 10}, {10, 8}, {10, 10}};
     _ghostDirections = {LEFT, RIGHT, UP, DOWN};
 }
@@ -124,7 +123,12 @@ void PacmanGame::update(float elapsed, const std::list<arc::Event>& events) {
         }
     }
 
-    movePacman();
+    _elapsedTimeSinceLastPacmanMove += elapsed;
+    if (_elapsedTimeSinceLastPacmanMove >= _pacmanMoveDelay) {
+        movePacman();
+        _elapsedTimeSinceLastPacmanMove = 0;
+    }
+
     updateGhosts(elapsed);
     checkCollisions();
 }
@@ -132,8 +136,8 @@ void PacmanGame::update(float elapsed, const std::list<arc::Event>& events) {
 void PacmanGame::draw(arc::IScreen& screen) {
     auto [width, height] = screen.getSize();
 
-    for (unsigned int y = 0; y < 50; ++y) {
-        for (unsigned int x = 0; x < 50; ++x) {
+    for (unsigned int y = 0; y < height; ++y) {
+        for (unsigned int x = 0; x < width; ++x) {
             arc::IScreen::Tile emptyTile;
             emptyTile.textCharacters = {' ', ' '};
             screen.setTile(x, y, emptyTile);

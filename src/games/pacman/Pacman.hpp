@@ -10,6 +10,7 @@
 
     #include <vector>
     #include <algorithm>
+    #include <ctime>
     #include "../../../common/IGame.hpp"
 
 namespace arc {
@@ -42,7 +43,10 @@ private:
     unsigned int _score;
     bool _gameOver;
     float _elapsedTimeSinceLastMove;
+    float _elapsedTimeSinceLastPacmanMove;
     float _ghostMoveDelay;
+    float _pacmanMoveDelay;
+    int _lives = 3;
     std::vector<std::pair<int, int>> _ghostPositions;
     std::vector<Direction> _ghostDirections;
 };
