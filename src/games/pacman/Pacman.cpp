@@ -9,9 +9,20 @@
 
 namespace arc {
 
-PacmanGame::PacmanGame() : _score(0), _gameOver(false), _elapsedTimeSinceLastMove(0), _elapsedTimeSinceLastPacmanMove(0), _ghostMoveDelay(5.0f), _pacmanMoveDelay(3.0f), _ghostsInitialDelay(100.0f), _lives(3), _totalFood(165) {
+PacmanGame::PacmanGame() : _score(0), _gameOver(false), _elapsedTimeSinceLastMove(0),
+    _elapsedTimeSinceLastPacmanMove(0), _ghostMoveDelay(3.0f), _pacmanMoveDelay(1.0f),
+    _ghostsInitialDelay(100.0f), _lives(3), _totalFood(165) {
     srand(time(NULL));
     reset();
+    _pacgumsPositions.clear();
+    for (int i = 0; i < 4; ++i) {
+        int x, y;
+        do {
+            x = rand() % _map[0].size();
+            y = rand() % _map.size();
+        } while (_map[y][x] != '.');
+        _pacgumsPositions.push_back({y, x});
+    }
 }
 
 PacmanGame::~PacmanGame() {}
@@ -49,6 +60,16 @@ void PacmanGame::reset() {
     _ghostPositions = {{9, 8}, {9, 9}, {10, 8}, {10, 9}};
     _ghostDirections = {LEFT, RIGHT, UP, DOWN};
     _totalFood = 165;
+    _pacgumsPositions.clear();
+    _pacmanMoveDelay = 1.0f;
+    for (int i = 0; i < 4; ++i) {
+        int x, y;
+        do {
+            x = rand() % _map[0].size();
+            y = rand() % _map.size();
+        } while (_map[y][x] != '.');
+        _pacgumsPositions.push_back({y, x});
+    }
 }
 
 void PacmanGame::movePacman() {
@@ -69,11 +90,19 @@ void PacmanGame::movePacman() {
             _totalFood--;
         }
     }
+
+    auto it = std::find(_pacgumsPositions.begin(), _pacgumsPositions.end(), nextPosition);
+    if (it != _pacgumsPositions.end()) {
+        _pacgumsPositions.erase(it);
+        _powerMode = true;
+        _powerModeTimer = 100.0f;
+        _pacmanMoveDelay = 0.5f;
+    }
 }
 
 void PacmanGame::checkCollisions() {
     for (const auto& ghost : _ghostPositions) {
-        if (_pacmanPosition == ghost) {
+        if (_pacmanPosition == ghost && !_powerMode) {
             _lives--;
             if (_lives == 0) {
                 _gameOver = true;
@@ -110,8 +139,16 @@ void PacmanGame::updateGhosts(float elapsed) {
         if (_map[nextPosition.first][nextPosition.second] != '#') {
             _ghostPositions[i] = nextPosition;
         } else {
-            // Change direction if ghost hits a wall
             _ghostDirections[i] = static_cast<Direction>(rand() % 4);
+        }
+
+        if (_powerMode) {
+            for (auto& ghost : _ghostPositions) {
+                if (ghost == _pacmanPosition) {
+                    ghost = {9, 8};
+                    _score += 50;
+                }
+            }
         }
     }
 }
@@ -146,6 +183,14 @@ void PacmanGame::update(float elapsed, const std::list<arc::Event>& events) {
 
     updateGhosts(elapsed);
     checkCollisions();
+
+    if (_powerMode) {
+        _powerModeTimer -= elapsed;
+        if (_powerModeTimer <= 0) {
+            _powerMode = false;
+            _pacmanMoveDelay = 1.0f;
+        }
+    }
 }
 
 void drawText(arc::IScreen& screen, int y, std::string str) {
@@ -165,12 +210,10 @@ void PacmanGame::draw(arc::IScreen& screen) {
         for (unsigned int x = 0; x < width; ++x) {
             arc::IScreen::Tile emptyTile;
             emptyTile.textCharacters = {' ', ' '};
-            //emptyTile.texturePath = "Assets/Images/background_empty.png";
             screen.setTile(x, y, emptyTile);
         }
     }
     
-    // Ensure the screen size matches the map size
     if (_map.size() > height || _map[0].size() > width) {
         screen.setSize(_map[0].size(), _map.size());
     }
@@ -199,8 +242,10 @@ void PacmanGame::draw(arc::IScreen& screen) {
         }
     }
     drawText(screen, 23, "Score: " + std::to_string(_score));
-    drawText(screen, 25, "Lifes: " + std::to_string(_lives));
-    drawText(screen, 27, "Keybinds: < ^ v >");
+    drawText(screen, 25, "Power Mode: " + std::to_string(_powerMode));
+    drawText(screen, 27, "Lifes: " + std::to_string(_lives));
+    drawText(screen, 28, "Speed: " + std::to_string(_pacmanMoveDelay));
+    drawText(screen, 29, "Keybinds: < ^ v >");
     // Draw Pacman
     arc::IScreen::Tile pacmanTile;
     pacmanTile.textCharacters = {'P', ' '};
@@ -215,6 +260,14 @@ void PacmanGame::draw(arc::IScreen& screen) {
     ghostTile.texturePath = "Assets/Images/ghost.png";
     for (const auto& ghost : _ghostPositions) {
         screen.setTile(ghost.second, ghost.first, ghostTile);
+    }
+
+    arc::IScreen::Tile pacgumTile;
+    pacgumTile.textCharacters = {'0', ' '};
+    pacgumTile.textColor = arc::Color::ColorWhite;
+    pacgumTile.texturePath = "Assets/Images/pacgum.png";
+    for (const auto& pacgum : _pacgumsPositions) {
+        screen.setTile(pacgum.second, pacgum.first, pacgumTile);
     }
 }
 

@@ -51,6 +51,9 @@ private:
     int _totalFood;
     std::vector<std::pair<int, int>> _ghostPositions;
     std::vector<Direction> _ghostDirections;
+    std::vector<std::pair<int, int>> _pacgumsPositions;
+    bool _powerMode = false;
+    float _powerModeTimer = 0.0f;
 };
 
 }
