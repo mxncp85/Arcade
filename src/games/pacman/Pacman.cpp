@@ -242,15 +242,22 @@ void PacmanGame::draw(arc::IScreen& screen) {
         }
     }
     drawText(screen, 23, "Score: " + std::to_string(_score));
-    drawText(screen, 25, "Power Mode: " + std::to_string(_powerMode));
+    if (_powerMode) {
+        drawText(screen, 25, "Power Mode: True");
+    } else {
+        drawText(screen, 25, "Power Mode: False");
+    }
     drawText(screen, 27, "Lifes: " + std::to_string(_lives));
-    drawText(screen, 28, "Speed: " + std::to_string(_pacmanMoveDelay));
     drawText(screen, 29, "Keybinds: < ^ v >");
     // Draw Pacman
     arc::IScreen::Tile pacmanTile;
     pacmanTile.textCharacters = {'P', ' '};
     pacmanTile.textColor = arc::Color::ColorYellow;
-    pacmanTile.texturePath = "Assets/Images/pacman.png";
+    if (_powerMode) {
+        pacmanTile.texturePath = "Assets/Images/power_pacman.png";
+    } else {
+       pacmanTile.texturePath = "Assets/Images/pacman.png";
+    }
     screen.setTile(_pacmanPosition.second, _pacmanPosition.first, pacmanTile);
     
     // Draw Ghosts
