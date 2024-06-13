@@ -116,9 +116,6 @@ void runMenu(const std::vector<std::string>& gamesNames, const std::vector<std::
         } else if (std::find(events.begin(), events.end(), arc::Event::EventAction) != events.end()) {
             currentGameIndex = menu.getSelectedIndex();
             break;
-        } else if (std::find(events.begin(), events.end(), arc::Event::EventNextGraphical) != events.end()) {
-            switchToNextGraphicalLibrary(graphical, loader, screen);
-            menu = arc::Menu(gamesNames, graphicsNames);
         }
 
         usleep(16000); // Wait for 16ms (~60fps)
