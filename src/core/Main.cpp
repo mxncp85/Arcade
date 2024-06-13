@@ -217,6 +217,5 @@ int main(int ac,  char **av)
     delete graphical;
     delete game;
     loader.closeLibrary(gameLib);
-    loader.closeLibrary(graphical);
     return 0;
 }
